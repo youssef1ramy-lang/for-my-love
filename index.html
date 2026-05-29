@@ -61,7 +61,7 @@
         .heart:after { left: 15px; top: 0; }
 
         @keyframes floatUp {
-            0% {
+            0 {
                 transform: translateY(0) rotate(-45deg) scale(0.6);
                 opacity: 0;
             }
@@ -111,14 +111,32 @@
             transform-origin: bottom center;
         }
 
-        /* Image Styling inside Polaroid */
-        .polaroid img {
+        /* Glowing Blue Placeholder Box instead of images */
+        .photo-placeholder {
             width: 100%;
             height: 70%;
-            object-fit: cover;
+            background: linear-gradient(135deg, #2980b9, #6c5ce7);
+            border: 1px solid rgba(0, 0, 0, 0.05);
             margin-bottom: 16px;
             border-radius: 2px;
-            border: 1px solid rgba(0, 0, 0, 0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .photo-placeholder::after {
+            content: "💙";
+            font-size: 2.2rem;
+            animation: pulse 2s infinite ease-in-out;
+            filter: drop-shadow(0 0 8px rgba(255,255,255,0.6));
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.15); }
         }
 
         /* Text inside Polaroid */
@@ -201,17 +219,17 @@
             <div class="hint">Tap cards to slide</div>
             
             <div class="polaroid card-3" onclick="slideCard(this)">
-                <img src="photo3.jpg" alt="Our Photo">
+                <div class="photo-placeholder"></div>
                 <p class="polaroid-text">I love laying in your arms.</p>
             </div>
 
             <div class="polaroid card-2" onclick="slideCard(this)">
-                <img src="photo2.jpg" alt="Our Photo">
+                <div class="photo-placeholder"></div>
                 <p class="polaroid-text">I love spending time with you.</p>
             </div>
 
             <div class="polaroid card-1" onclick="slideCard(this)">
-                <img src="photo1.jpg" alt="Our Photo">
+                <div class="photo-placeholder"></div>
                 <p class="polaroid-text">I love being yours. I love the feeling of being called "baby" and "my love".</p>
             </div>
             
