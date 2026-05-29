@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For My Love</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: linear-gradient(to bottom, #0a1128, #101f42);
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            color: #ffffff;
+            padding: 20px;
+        }
+
+        /* Floating Hearts Background */
+        .bg-hearts {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .heart {
+            position: absolute;
+            bottom: -50px;
+            background-color: rgba(52, 152, 219, 0.4);
+            display: inline-block;
+            height: 30px;
+            margin: 0 10px;
+            transform: rotate(-45deg);
+            width: 30px;
+            animation: floatUp 8s infinite linear;
+            filter: drop-shadow(0 0 10px rgba(52, 152, 219, 0.6));
+        }
+
+        .heart:before, .heart:after {
+            content: "";
+            background-color: inherit;
+            border-radius: 50%;
+            position: absolute;
+            width: 30px;
+            height: 30px;
+        }
+
+        .heart:before { top: -15px; left: 0; }
+        .heart:after { left: 15px; top: 0; }
+
+        @keyframes floatUp {
+            0% {
+                transform: translateY(0) rotate(-45deg) scale(0.6);
+                opacity: 0;
+            }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% {
+                transform: translateY(-105vh) rotate(-45deg) scale(1);
+                opacity: 0;
+            }
+        }
+
+        /* Main Container */
+        .main-container {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            max-width: 400px;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Polaroid Stack Container */
+        .stack-container {
+            position: relative;
+            width: 280px;
+            height: 360px;
+            margin-bottom: 40px;
+            perspective: 1000px;
+        }
+
+        /* Individual Polaroid Card */
+        .polaroid {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: #f7f5f0;
+            padding: 16px 16px 24px 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 1px 3px rgba(0, 0, 0, 0.2);
+            border-radius: 2px;
+            display: flex;
+            flex-direction: column;
+            cursor: pointer;
+            transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1), opacity 0.6s ease;
+            transform-origin: bottom center;
+        }
+
+        /* Image Styling inside Polaroid */
+        .polaroid img {
+            width: 100%;
+            height: 70%;
+            object-fit: cover;
+            margin-bottom: 16px;
+            border-radius: 2px;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        /* Text inside Polaroid */
+        .polaroid-text {
+            font-family: 'Comic Sans MS', 'Chalkboard SE', 'Marker Felt', sans-serif;
+            color: #2c3e50;
+            font-size: 1.1rem;
+            line-height: 1.4;
+            text-align: center;
+            margin: auto 0;
+            font-weight: 500;
+        }
+
+        /* Stack Positioning Shapes */
+        .card-3 { transform: rotate(-6deg) translateZ(-20px); z-index: 10; }
+        .card-2 { transform: rotate(4deg) translateZ(-10px); z-index: 20; }
+        .card-1 { transform: rotate(-2deg); z-index: 30; }
+
+        /* Animation when clicked/swiped away */
+        .polaroid.slide-away {
+            transform: translateX(150%) rotate(30deg) !important;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* Bottom Fixed Message Container */
+        .safe-space-container {
+            text-align: center;
+            max-width: 320px;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 1s ease-out;
+            padding: 15px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        }
+
+        .safe-space-container.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .safe-space-text {
+            font-size: 1.2rem;
+            font-weight: 600;
+            line-height: 1.5;
+            background: linear-gradient(45deg, #74b9ff, #e84393);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 15px rgba(116, 185, 255, 0.2);
+        }
+
+        /* Tap Instruction Helper */
+        .hint {
+            position: absolute;
+            top: -30px;
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.4);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            animation: bounce 1.5s infinite alternate;
+        }
+
+        @keyframes bounce {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-5px); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-hearts" id="heartsBg"></div>
+
+    <div class="main-container">
+        
+        <div class="stack-container" id="cardStack">
+            <div class="hint">Tap cards to slide</div>
+            
+            <div class="polaroid card-3" onclick="slideCard(this)">
+                <img src="photo3.jpg" alt="Our Photo">
+                <p class="polaroid-text">I love laying in your arms.</p>
+            </div>
+
+            <div class="polaroid card-2" onclick="slideCard(this)">
+                <img src="photo2.jpg" alt="Our Photo">
+                <p class="polaroid-text">I love spending time with you.</p>
+            </div>
+
+            <div class="polaroid card-1" onclick="slideCard(this)">
+                <img src="photo1.jpg" alt="Our Photo">
+                <p class="polaroid-text">I love being yours. I love the feeling of being called "baby" and "my love".</p>
+            </div>
+            
+        </div>
+
+        <div class="safe-space-container" id="safeSpaceBlock">
+            <p class="safe-space-text">You're my safe space and my other half 💙</p>
+        </div>
+
+    </div>
+
+    <script>
+        // Generate Floating Blue Hearts
+        const heartsContainer = document.getElementById('heartsBg');
+        const totalHearts = 25;
+
+        for (let i = 0; i < totalHearts; i++) {
+            const heart = document.createElement('div');
+            heart.classList.add('heart');
+            heart.style.left = `${Math.random() * 100}%`;
+            heart.style.animationDelay = `${Math.random() * 8}s`;
+            heart.style.animationDuration = `${6 + Math.random() * 5}s`;
+            
+            const size = 15 + Math.random() * 20;
+            heart.style.width = `${size}px`;
+            heart.style.height = `${size}px`;
+            
+            heartsContainer.appendChild(heart);
+        }
+
+        // Handle Card Swiping Action
+        let cardsLeft = 3;
+        function slideCard(card) {
+            if (!card.classList.contains('slide-away')) {
+                card.classList.add('slide-away');
+                cardsLeft--;
+                
+                if (cardsLeft === 0) {
+                    setTimeout(() => {
+                        document.getElementById('safeSpaceBlock').classList.add('show');
+                        document.querySelector('.hint').style.display = 'none';
+                    }, 400);
+                }
+            }
+        }
+    </script>
+</body>
+</html>
